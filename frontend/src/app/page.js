@@ -64,9 +64,103 @@ const App = () => {
     setSessionId(data.sessionId);
   });
 
-  
+  async function playOnlineClick() {
+    const result = await takePlayerName();
 
-  
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    const username = result.value;
+    setPlayerName(username);
+
+    await fetch('http://localhost:5000/api/player/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: username }),
+    });
+
+    const newSocket = io("http://localhost:5000", {
+      autoConnect: true,
+    });
+
+    newSocket?.emit("request_to_play", {
+      playerName: username,
+    });
+
+    setSocket(newSocket);
+
+    const session = uuidv4();
+    setSessionId(session);
+  }
+
+  async function fetchHistory(){
+    const response = await fetch(`http://localhost:5000/api/player/${playerName}/history`);
+    const history = await response.json();
+
+    let historyTable = `
+      <table style="width:100%; text-align: left; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 1px solid black;">
+            <th>Opponent</th>
+            <th>Session ID</th>
+            <th>Outcome</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${history.map(item => `
+            <tr>
+              <td>${item.opponent}</td>
+              <td>${item.sessionId}</td>
+              <td>${item.outcome}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+
+    await Swal.fire({
+      title: `${playerName}'s Game History`,
+      html: historyTable,
+      showCloseButton: true,
+      width: '800px'
+    });
+  }
+
+  useEffect(() => {
+    if (finishedState && playerName) {
+      const outcome = finishedState === 'draw' ? 'draw' : (finishedState === playingAs ? 'win' : 'lose');
+      fetch('http://localhost:5000/api/player/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: playerName,
+          sessionId: sessionId,
+          outcome,
+          opponent: opponentName,
+        }),
+      });
+    }
+  }, [finishedState]);
+
+  if (!playOnline) {
+    return (
+      <div className="main-div">
+        <button onClick={playOnlineClick} className="playOnline">
+          Play Online
+        </button>
+      </div>
+    );
+  }
+
+  if (playOnline && !opponentName) {
+    return (
+      <div className="waiting">
+        <p>Waiting for opponent</p>
+      </div>
+    );
+  }
+
   return (
     <div className="main-div" role="main">
       <div className="move-detection" aria-live="polite">
