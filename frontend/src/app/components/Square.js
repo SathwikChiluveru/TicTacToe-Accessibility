@@ -96,12 +96,20 @@ const Square = ({
 
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={clickOnSquare}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          clickOnSquare();
+        }
+      }}
       className={`square ${finishedState ? "not-allowed" : ""}
       ${currentPlayer !== playingAs ? "not-allowed" : ""}
        ${finishedArrayState.includes(id) ? finishedState + "-won" : ""}
        ${finishedState && finishedState !== playingAs ? "grey-background" : ""}
        `}
+       aria-label={`Square ${id}, ${currentElement ? currentElement : "empty"}`}
     >
       {currentElement === "circle"
         ? circleSvg
