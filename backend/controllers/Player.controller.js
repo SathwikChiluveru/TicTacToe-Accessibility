@@ -1,4 +1,4 @@
-const Player = require('../model/Player.model');
+const Player = require('../models/Player.model');
 
 exports.createPlayer = async (req, res) => {
   const { name } = req.body;
