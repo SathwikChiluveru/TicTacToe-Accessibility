@@ -69,4 +69,15 @@
 
 ## Design/Infra and Accessibility Considerations
 
-The application was built using the MERN stack, ensuring real-time gameplay via WebSockets (Socket.IO) and REST APIs for player data management. A `uuid` ensures a unique session ID for game tracking across browsers. Accessibility was prioritized through ARIA labels. The app’s simplicity with high-contrast visuals and large clickable areas enhances usability for individuals with disabilities.
+The application was built using the MERN stack, ensuring real-time gameplay via WebSockets (Socket.IO) and REST APIs for player data management. A UUID ensures a unique session ID for game tracking across browsers. Accessibility was prioritized through ARIA labels, keyboard navigation, and screen reader support, with a focus on high-contrast visuals and large clickable areas to enhance usability for individuals with disabilities.
+
+While initially considering more complex database schemas and APIs, I realized that a minimal design was more efficient. The schema with an array for history tracking is sufficient and scalable, avoiding unnecessary complexity. It links game sessions effectively, ensuring that both players share a session ID without requiring an over-complicated API structure. This design balances simplicity with scalability.
+
+I decided to use SweetAlert2, which is a fantastic option to improve the user experience, especially for users who depend on accessibility features, because of its reputation for being highly configurable and WAI-ARIA compatible. With accessibility in mind, this enables smooth game interaction and notifications about game status or history.
+
+## Infrastructure Diagram
+
+![Tic-Tac-Toe-Architecture](https://github.com/user-attachments/assets/d22815b0-50d9-44f2-99a9-15d00545b0e0)
+
+
+
